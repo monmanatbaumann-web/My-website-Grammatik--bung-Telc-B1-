@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch mit Monmanat - Telc B1 Kartentrainer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text-main);
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* Control Bar */
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .timer-select, .btn-action {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action:hover {
+            background: var(--primary-hover);
+        }
+
+        .timer-display {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Card Container */
+        .flashcard {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            position: relative;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .card-header-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .task-prompt {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .option-btn {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            padding: 12px 18px;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .option-btn.correct {
+            background: #d1fae5 !important;
+            border-color: var(--accent) !important;
+            color: #065f46;
+        }
+
+        .option-btn.wrong {
+            background: #fee2e2 !important;
+            border-color: var(--danger) !important;
+            color: #991b1b;
+        }
+
+        /* Footer inside card */
+        .card-footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .btn-toggle-solution {
+            background: #f3f4f6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-toggle-solution:hover {
+            background: #e5e7eb;
+        }
+
+        /* Solution & Translation Box */
+        .solution-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .solution-box.active {
+            display: block;
+        }
+
+        .speech-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Hilfewortschatz Panel */
+        .help-panel {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .help-panel h4 {
+            color: #b45309;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Watermark */
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.8rem;
+            color: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            pointer-events: none;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width: 600px) {
+            .controls-bar {
+                flex-direction: column;
+                width: 100%;
+            }
+            .flashcard {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Telc B1 Grammatik & Stil</h1>
+            <p>Interaktives Kartenziehen nach Prüfungsformat</p>
+        </header>
+
+        <!-- Steuerung & Timer -->
+        <div class="controls-bar">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <select id="timerDuration" class="timer-select">
+                    <option value="60">1 Minute</option>
+                    <option value="30">30 Sekunden</option>
+                </select>
+                <div class="timer-display" id="timerDisplay">
+                    <i class="fa-regular fa-clock"></i> <span id="timeLeft">60</span>s
+                </div>
+            </div>
+            <button class="btn-action" onclick="drawNextCard()">
+                <i class="fa-solid fa-shuffle"></i> Nächste Karte ziehen (<span id="remainingCount">50</span>)
+            </button>
+        </div>
+
+        <!-- Hauptkarte -->
+        <div class="flashcard" id="flashcardElement">
+            <div>
+                <div class="card-header-info">
+                    <span id="cardCategory">Kategorie: Präpositionen</span>
+                    <span id="cardCounter">Karte 1 von 50</span>
+                </div>
+                
+                <div class="card-body">
+                    <div class="task-prompt" id="taskPrompt">
+                        Lade Frage...
+                    </div>
+                    <div class="options-grid" id="optionsGrid">
+                        <!-- Dynamische Optionen -->
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <!-- Hilfewortschatz für spontanes Sprechen -->
+                <div class="help-panel" id="helpPanel">
+                    <h4><i class="fa-solid fa-lightbulb"></i> Hilfewortschatz (Spontan sprechen):</h4>
+                    <span id="helpVocabText">-</span>
+                </div>
+
+                <div class="card-footer-actions">
+                    <button class="btn-toggle-solution" onclick="toggleSolution()">
+                        <i class="fa-solid fa-eye" id="eyeIcon"></i> Lösung & Übersetzung
+                    </button>
+                    <span id="scoreDisplay" style="font-size:0.9rem; font-weight:600; color:var(--accent);"></span>
+                </div>
+
+                <!-- Lösungs- und Übersetzungsbox -->
+                <div class="solution-box" id="solutionBox">
+                    <div id="solutionText"><b>Richtige Antwort:</b> ...</div>
+                    <div id="translationText" style="margin-top: 5px; color: #4b5563;"><b>Übersetzung (Thai/Deutsch):</b> ...</div>
+                    <button class="speech-btn" onclick="playAudio()">
+                        <i class="fa-solid fa-volume-high"></i> Satz vorlesen hören
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wasserzeichen -->
+    <div class="watermark">Deutsch mit Monmanat</div>
+
+    <script>
+        // 50 Telc B1 Prüfungsfragen (Briefe, E-Mails, Kurznachrichten)
+        const questionsDB = [
+            { cat: "Präpositionen (Dativ/Akkusativ)", prompt: "Liebe Anna, ich bedanke mich herzlich _______ deine tolle Einladung zur Party.", options: ["für", "über", "auf"], correct: 0, help: "sich bedanken für (+ Akk.) | tollem Einladung / feiern", trans: "เรียนคุณ Anna ฉันขอขอบคุณสำหรับคำเชิญงานปาร์ตี้ที่ยอดเยี่ยมของคุณ" },
+            { cat: "Nebensätze (Konjunktionen)", prompt: "Sehr geehrte Damen und Herren, ich schreibe Ihnen, _______ ich leider nächste Woche nicht kommen kann.", options: ["weil", "obwohl", "damit"], correct: 0, help: "Grund angeben | Grund: Leider nicht kommen können", trans: "เรียน ท่านผู้มีเกียรติทุกท่าน ดิฉันเขียนมาเพื่อแจ้งว่าน่าเสียดายที่สัปดาห์หน้าดิฉันไม่สามารถมาได้" },
+            { cat: "Wortschatz / E-Mail", prompt: "Hallo Tom, könntest du mir bitte bis morgen _______, ob du Zeit hast?", options: ["bescheid geben", "aufpassen", "teilnehmen"], correct: 0, help: "Bescheid geben = แจ้งให้ทราบ | rechtzeitig antworten", trans: "สวัสดี Tom ช่วยแจ้งให้ฉันทราบหน่อยได้ไหมว่าพรุ่งนี้เธอมีเวลาว่างหรือเปล่า?" },
+            { cat: "Adjektivdeklination", prompt: "Liebe Kolleginnen, ich möchte mich für die _______ Zusammenarbeit in diesem Jahr bedanken.", options: ["gute", "guten", "gutem"], correct: 0, help: "Akkusativ Feminin Singular (die gute Zusammenarbeit)", trans: "เรียนเพื่อนร่วมงานทุกท่าน ฉันอยากจะขอบคุณสำหรับความร่วมมือที่ดีในปีนี้" },
+            { cat: "Präpositionen (Ort)", prompt: "Hallo Lukas, wir treffen uns heute Abend _______ dem Bahnhof, okay?", options: ["vor", "neben", "auf"], correct: 0, help: "vor + Dativ (ตำแหน่งด้านหน้า) | pünktlich sein", trans: "สวัสดี Lukas เย็นนี้เราเจอกันหน้าสถานีรถไฟนะ โอเคไหม?" },
+            { cat: "Passiv Präsens", prompt: "Sehr geehrte Damen und Herren, hiermit möchte ich fragen, wann mein Koffer _______.", options: ["geliefert wird", "liefern wird", "wird geliefert"], correct: 0, help: "Passiv: werden + Partizip II am Satzende", trans: "เรียน ท่านผู้มีเกียรติ ฉันอยากจะสอบถามว่ากระเป๋าเดินทางของฉันจะถูกจัดส่งเมื่อไหร่" },
+            { cat: "Nebensätze (Infinitiv mit zu)", prompt: "Hallo Maria, es tut mir leid, dass ich vergessen habe, dich _______ anzurufen.", options: ["gestern", "gestern Abend", "gestern"], correct: 0, help: "vergessen + zu + Infinitiv", trans: "สวัสดี Maria ฉันขอโทษจริงๆ ที่ฉันลืมโทรหาเธอเมื่อวานนี้" },
+            { cat: "Relativsätze", prompt: "Guten Tag Herr Müller, hier ist der Schlüssel, _______ Sie gestern verloren haben.", options: ["den", "der", "dem"], correct: 0, help: "Akkusativ Maskulin (der Schlüssel -> den Schlüssel)", trans: "สวัสดีครับคุณ Müller นี่คือกุญแจที่คุณทำหายเมื่อวานนี้" },
+            { cat: "Modalverben im Präteritum", prompt: "Liebe Sarah, gestern _______ ich leider den ganzen Tag arbeiten und konnte nicht kommen.", options: ["musste", "kollidierte", "wollte"], correct: 0, help: "musste = ต้อง (ในอดีต) | Termine einhalten", trans: "สวัสดี Sarah เมื่อวานนี้ฉันต้องทำงานทั้งวันเลยมาไม่ได้" },
+            { cat: "Präpositionen (Zeit)", prompt: "Sehr geehrter Herr Bauer, ich muss den Termin leider _______ nächsten Freitag verschieben.", options: ["auf", "an", "in"], correct: 0, help: "verschieben auf (+ Akk.) | einen neuen Termin ausmachen", trans: "เรียนคุณ Bauer ฉันจำเป็นต้องเลื่อนนัดหมายไปเป็นวันศุกร์หน้า" },
+            { cat: "Konjunktiv II (Wünsche)", prompt: "Hallo Team, ich _______ mich freuen, wenn ihr mir bei dem Projekt helfen könntet.", options: ["würde", "werde", "wäre"], correct: 0, help: "Höfliche Bitte: Ich würde mich freuen...", trans: "สวัสดีทีมงาน ฉันจะดีใจมากเลยถ้าพวกคุณช่วยฉันในโปรเจกต์นี้" },
+            { cat: "Wortschatz / Beschwerde", prompt: "Sehr geehrte Damen und Herren, leider muss ich mich _______ dem Lärm in der Nachbarschaft beschweren.", options: ["über", "gegen", "von"], correct: 0, help: "sich beschwehren über (+ Akk.)", trans: "เรียน ท่านผู้มีเกียรติ ฉันจำต้องร้องเรียนเกี่ยวกับเสียงดังรบกวนในละแวกบ้าน" },
+            { cat: "Konjunktionen (Zusammenhang)", prompt: "Liebe Julia, ich komme gern zu deiner Party, _______ ich muss vorher noch lange arbeiten.", options: ["aber", "denn", "deshalb"], correct: 0, help: "Gegensatz ausdrücken (แต่)", trans: "สวัสดี Julia ฉันยินดีไปงานปาร์ตี้ของเธอ แต่ฉันต้องทำงานนานก่อนหน้านั้น" },
+            { cat: "Dativverben", prompt: "Hallo Chef, ich wollte Ihnen _______, dass ich morgen etwas später komme.", options: ["bescheid sagen", "sagen", "mitteilen"], correct: 0, help: "jemandem (Dativ) etwas mitteilen", trans: "สวัสดีครับหัวหน้า ผมอยากจะแจ้งให้คุณทราบว่าพรุ่งนี้ผมจะมาสายกว่าปกตินิดหน่อย" },
+            { cat: "Adjektivdeklination (Neutral)", prompt: "Hallo Anna, vielen Dank für das _______ Geschenk zu meinem Geburtstag!", options: ["schöne", "schönen", "schönem"], correct: 0, help: "Nom/Akk Neutrum Singular (das schöne Geschenk)", trans: "สวัสดี Anna ขอบคุณมากสำหรับของขวัญอันสวยงามในวันเกิดของฉัน!" },
+            { cat: "Präpositionen (Wechselpräposition)", prompt: "Liebe Familie, wir hängen das neue Bild _______ die Wand im Wohnzimmer.", options: ["an", "auf", "in"], correct: 0, help: "an + Akk (Bewegung / Wohin?)", trans: "สวัสดีครอบครัว เราจะแขวนรูปภาพใหม่ไว้ที่ผนังในห้องนั่งเล่น" },
+            { cat: "Temporale Präpositionen", prompt: "Sehr geehrte Damen und Herren, ich kann _______ drei Wochen nicht am Kurs teilnehmen.", options: ["für", "seit", "in"], correct: 0, help: "für einen Zeitraum (เป็นเวลา...)", trans: "เรียน ท่านผู้มีเกียรติ ฉันไม่สามารถเข้าร่วมคอร์สเรียนได้เป็นเวลาสามสัปดาห์" },
+            { cat: "Indirekte Fragen", prompt: "Hallo Paul, weißt du zufällig, _______ der Bus zum Bahnhof fährt?", options: ["wann", "woher", "warum"], correct: 0, help: "Frage nach der Zeit (Wann fährt...?)", trans: "สวัสดี Paul เธอพอจะรู้ไหมว่ารถบัสไปสถานีรถไฟออกกี่โมง?" },
+            { cat: "Konditionalsätze", prompt: "Lieber Jan, _______ du Zeit hast, können wir uns heute Nachmittag treffen.", options: ["wenn", "als", "ob"], correct: 0, help: "Bedingung (ถ้า / เมื่อไหร่ก็ตามที่)", trans: "สวัสดี Jan ถ้าเธอมีเวลาว่าง เรามาเจอกันบ่ายวันนี้ได้นะ" },
+            { cat: "Perfekt mit sein", prompt: "Hallo Mama, ich _______ gestern gut in Berlin angekommen.", options: ["bin", "habe", "wurde"], correct: 0, help: "Zustandsänderung / Bewegung -> sein + angekommen", trans: "สวัสดีคุณแม่ ลูกเดินทางมาถึง Berlin อย่างปลอดภัยเมื่อวานนี้ครับ" },
+            { cat: "Genitiv bei Eigennamen / Namen", prompt: "Hallo, hier ist das Buch _______ Kollegen, das er in der Pause vergessen hat.", options: ["unseres", "unserem", "unsere"], correct: 0, help: "Genitiv Maskulin (des Kollegen)", trans: "สวัสดีครับ นี่คือหนังสือของเพื่อนร่วมงานของเราที่เขาลืมไว้ตอนพักเบรก" },
+            { cat: "Vergleichsformen", prompt: "Lieber Max, Berlin ist viel _______ als unsere alte Heimatstadt.", options: ["größer", "groß", "am größten"], correct: 0, help: "Komparativ (-er als)", trans: "สวัสดี Max กรุงเบอร์ลินใหญ่กว่าเมืองบ้านเกิดเก่าของเรามาก" },
+            { cat: "Nomen-Verb-Verbindungen", prompt: "Sehr geehrte Damen und Herren, ich möchte mich hiermit für den Kurs _______.", options: ["anmelden", "entschuldigen", "bedanken"], correct: 0, help: "sich anmelden für einen Kurs", trans: "เรียน ท่านผู้มีเกียรติ ฉันต้องการลงทะเบียนเรียนคอร์สนี้" },
+            { cat: "Pronomen im Akkusativ", prompt: "Hallo Lisa, ich habe deine Tasche gefunden. Soll ich _______ dir vorbeibringen?", options: ["sie", "ihn", "es"], correct: 0, help: "die Tasche -> sie (Akkusativ)", trans: "สวัสดี Lisa ฉันหากระเป๋าของเธอเจอแล้ว จะให้ฉันเอาไปส่งให้เธอไหม?" },
+            { cat: "Konjunktion 'ob'", prompt: "Hallo Tim, kannst du mir sagen, _______ wir morgen einen Test schreiben?", options: ["ob", "dass", "wenn"], correct: 0, help: "Ja/Nein-Frage als Nebensatz (ว่า...หรือไม่)", trans: "สวัสดี Tim เธอช่วยบอกฉันหน่อยได้ไหมว่าพรุ่งนี้เรามีสอบกันหรือเปล่า?" },
+            { cat: "Imperativ (Höflichkeitsform)", prompt: "Sehr geehrter Herr Klein, _______ Sie bitte das Formular bis Freitag aus.", options: ["füllen", "füllen Sie", "füllen Sie aus"], correct: 0, help: "Trennbares Verb im Imperativ (ausfüllen -> Füllen ... aus)", trans: "เรียนคุณ Klein ช่วยกรอกแบบฟอร์มนี้ให้เรียบร้อยภายในวันศุกร์ด้วยครับ" },
+            { cat: "Adjektiv als Nomen", prompt: "Liebe Gäste, für _______ bieten wir heute ein spezielles Menü an.", options: ["unsere Gäste", "Vegetarier", "alle"], correct: 0, help: "Höfliche Ansprache / Zielgruppe", trans: "เรียนแขกผู้มีเกียรติทุกท่าน วันนี้เรามีเมนูพิเศษสำหรับทุกท่าน" },
+            { cat: "Präpositionen mit Genitiv", prompt: "Sehr geehrte Damen und Herren, _______ des schlechten Wetters fällt der Ausflug aus.", options: ["Wegen", "Trotz", "Während"], correct: 0, help: "Wegen + Genitiv (เนื่องจากสภาพอากาศแย่)", trans: "เรียน ท่านผู้มีเกียรติ เนื่องจากสภาพอากาศที่ไม่ดี ทัศนศึกษาจึงต้องถูกยกเลิก" },
+            { cat: "Wortschatz / Entschuldigung", prompt: "Hallo Chef, ich kann heute leider nicht kommen, da ich _______ bin.", options: ["krank", "gesund", "müde"], correct: 0, help: "Krankmeldung (แจ้งลาป่วย)", trans: "สวัสดีครับหัวหน้า วันนี้ผมไม่สามารถมาได้เนื่องจากผมป่วยครับ" },
+            { cat: "Reflexive Verben", prompt: "Liebe Freunde, ich freue _______ riesig auf unser Treffen am Wochenende.", options: ["mich", "mir", "dich"], correct: 0, help: "sich freuen auf (+ Akk.)", trans: "สวัสดีเพื่อนๆ ฉันตื่นเต้นและตั้งตารองานพบปะกันสุดสัปดาห์นี้มากๆ" },
+            { cat: "Konjunktionen 'während'", prompt: "Hallo Anna, _______ du im Urlaub warst, ist ein Brief für dich gekommen.", options: ["während", "als", "wenn"], correct: 0, help: "Gleichzeitigkeit (ในขณะที่)", trans: "สวัสดี Anna ในขณะที่เธอไปพักผ่อน มีจดหมายส่งมาถึงเธอด้วยนะ" },
+            { cat: "Präpositionen (Ort / Richtung)", prompt: "Sehr geehrte Damen und Herren, ich reise nächste Woche _______ Spanien.", options: ["nach", "in", "zu"], correct: 0, help: "Länder ohne Artikel -> nach Spanien", trans: "เรียน ท่านผู้มีเกียรติ สัปดาห์หน้าฉันจะเดินทางไปประเทศสเปน" },
+            { cat: "Präteritum von Modalverben", prompt: "Hallo Tom, ich _______ gestern leider nicht anrufen, weil mein Handy kaputt war.", options: ["konnte", "kann", "musste"], correct: 0, help: "Können im Präteritum (ไม่สามารถทำได้ในอดีต)", trans: "สวัสดี Tom เมื่อวานนี้ฉันโทรหาไม่ได้เลยเพราะโทรศัพท์มือถือพัง" },
+            { cat: "Direktive Verben", prompt: "Liebe Nachbarn, ich möchte Sie darum _______, ab 22 Uhr leise zu sein.", options: ["bitten", "fragen", "sagen"], correct: 0, help: "jemanden bitten um etwas / jemanden darum bitten", trans: "เรียนเพื่อนบ้านทุกท่าน ฉันอยากจะขอความกรุณาช่วยเงียบเสียงตั้งแต่ 22.00 น. เป็นต้นไป" },
+            { cat: "Adjektivdeklination (nach bestimmtem Artikel)", prompt: "Hallo Maria, wie gefällt dir _______ neue Wohnung?", options: ["die", "das", "der"], correct: 0, help: "Nominativ Feminin nach bestimmtem Artikel", trans: "สวัสดี Maria เธอชอบอพาร์ตเมนต์ใหม่เป็นยังไงบ้าง?" },
+            { cat: "Konnektoren (Folge)", prompt: "Sehr geehrter Herr Doktor, ich habe starke Kopfschmerzen, _______ kann ich heute nicht arbeiten.", options: ["deshalb", "trotzdem", "außerdem"], correct: 0, help: "Folge / Konsequenz ausdrücken (ดังนั้น)", trans: "เรียนคุณหมอ ฉันปวดหัวมาก ดังนั้นวันนี้จึงไม่สามารถทำงานได้" },
+            { cat: "Perfekt mit haben", prompt: "Hallo Markus, hast du gestern das Fußballspiel _______?", options: ["gesehen", "sehen", "geseht"], correct: 0, help: "Partizip II von sehen -> gesehen", trans: "สวัสดี Markus เมื่อวานนี้เธอได้ดูการแข่งขันฟุตบอลหรือเปล่า?" },
+            { cat: "Präpositionen (Ort ohne Artikel)", prompt: "Hallo Julia, ich war das ganze Wochenende _______ Hause geblieben.", options: ["zu", "in", "bei"], correct: 0, help: "zu Hause bleiben (อยู่บ้าน)", trans: "สวัสดี Julia ฉันอยู่บ้านตลอดทั้งช่วงสุดสัปดาห์ที่ผ่านมา" },
+            { cat: "Wortschatz / Wohnungssuche", prompt: "Sehr geehrte Damen und Herren, ich interessiere mich _______ die freie Wohnung in der Hauptstraße.", options: ["für", "über", "an"], correct: 0, help: "sich interessieren für (+ Akk.)", trans: "เรียน ท่านผู้มีเกียรติ ฉันมีความสนใจห้องว่างบนถนน Hauptstraße" },
+            { cat: "Zweiteilige Konjunktionen", prompt: "Hallo Lena, wir können _______ ins Kino gehen _______ zu Hause bleiben.", options: ["entweder ... oder", "weder ... noch", "sowohl ... als auch"], correct: 0, help: "entweder ... oder (ไม่...ก็...)", trans: "สวัสดี Lena พวกเราจะไปดูหนังหรือไม่ก็อยู่บ้านก็ได้" },
+            { cat: "Modalverben (Rat geben)", prompt: "Hallo Stefan, du _______ unbedingt mehr Sport machen, wenn du gesund bleiben willst.", options: ["solltest", "könntest", "musst"], correct: 0, help: "Ratschlag geben (Konjunktiv II von sollen)", trans: "สวัสดี Stefan เธอควรจะออกกำลังกายให้มากขึ้นนะถ้าอยากมีสุขภาพแข็งแรง" },
+            { cat: "Dativobjekt", prompt: "Liebe Oma, ich habe _______ zum Geburtstag ein tolles Buch gekauft.", options: ["dir", "dich", "dein"], correct: 0, help: "jemandem (Dativ) etwas schenken/kaufen", trans: "สวัสดีคุณย่าที่รัก ผมซื้อหนังสือเล่มเยี่ยมให้คุณเป็นของขวัญวันเกิดครับ" },
+            { cat: "Nebensätze (Grund)", prompt: "Hallo Chef, ich komme heute etwas später, _______ ich zum Arzt gehen muss.", options: ["da", "obwohl", "während"], correct: 0, help: "Begründung mit da (เนื่องจาก)", trans: "สวัสดีครับหัวหน้า วันนี้ผมจะมาสายหน่อยเนื่องจากต้องไปหาหมอ" },
+            { cat: "Pronomen (Possessiv)", prompt: "Hallo Karin, hast du eigentlich _______ Autoschlüssel gesehen?", options: ["meinen", "mein", "meinem"], correct: 0, help: "Akkusativ Maskulin (der Schlüssel -> meinen Schlüssel)", trans: "สวัสดี Karin เธอเห็นกุญแจรถของฉันบ้างไหมเอ่ย?" },
+            { cat: "Präpositionen mit Akkusativ", prompt: "Sehr geehrter Herr Meier, ich bedanke mich _______ Ihre schnelle Antwort.", options: ["für", "über", "um"], correct: 0, help: "sich bedanken für (+ Akk.)", trans: "เรียนคุณ Meier ฉันขอขอบคุณสำหรับการตอบกลับอย่างรวดเร็วของคุณ" },
+            { cat: "Komparativ / Steigerung", prompt: "Hallo Paul, kannst du bitte etwas _______ sprechen? Ich verstehe dich schlecht.", options: ["langsamer", "länger", "laut"], correct: 0, help: "langsamer sprechen (พูดช้าลงหน่อย)", trans: "สวัสดี Paul เธอช่วยพูดช้าลงหน่อยได้ไหม? ฉันฟังเธอไม่ค่อยถนัด" },
+            { cat: "Präpositionen (Ort / Gebäude)", prompt: "Hallo Jens, treffen wir uns heute um 15 Uhr _______ Café an der Ecke?", options: ["im", "am", "in"], correct: 0, help: "in dem Café -> im Café", trans: "สวัสดี Jens วันนี้ตอนบ่ายสามโมงเราเจอกันที่คาเฟ่หัวมุมถนนดีไหม?" },
+            { cat: "Indefinitpronomen", prompt: "Guten Tag, kann ich Ihnen _______ helfen?", options: ["etwas", "jemand", "alle"], correct: 0, help: "kann ich Ihnen etwas helfen? (มีอะไรให้ช่วยไหมครับ)", trans: "สวัสดีครับ มีอะไรให้ผมช่วยไหมครับ?" },
+            { cat: "Vergangenheit / Präteritum", prompt: "Liebe Freunde, letztes Jahr _______ wir zusammen in Italien im Urlaub.", options: ["waren", "sind", "haben"], correct: 0, help: "Präteritum von sein (waren)", trans: "สวัสดีเพื่อนๆ ปีที่แล้วพวกเราไปเที่ยวพักผ่อนที่อิตาลีด้วยกัน" },
+            { cat: "Wortschatz / Einladung", prompt: "Hallo Claudia, ich möchte dich herzlich zu meinem Geburtstag _______.", options: ["einladen", "besuchen", "feiern"], correct: 0, help: "jemanden einladen zu (+ Dativ)", trans: "สวัสดี Claudia ฉันอยากจะขอเชิญเธอมางานวันเกิดของฉันด้วยความยินดี" }
+        ];
+
+        let shuffledIndices = [];
+        let currentCardIndex = 0;
+        let timer = null;
+        let timeLeft = 60;
+        let score = 0;
+        let answeredCurrent = false;
+
+        // Shuffle index Array for unique non-repeating sequence
+        function initDeck() {
+            shuffledIndices = Array.from(Array(questionsDB.length).keys());
+            // Fisher-Yates Shuffle
+            for (let i = shuffledIndices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+            }
+            currentCardIndex = 0;
+            score = 0;
+            loadCard();
+        }
+
+        function loadCard() {
+            if (currentCardIndex >= shuffledIndices.length) {
+                alert("Herzlichen Glückwunsch! Du hast alle 50 Karten erfolgreich durchgearbeitet.");
+                initDeck();
+                return;
+            }
+
+            answeredCurrent = false;
+            const qIndex = shuffledIndices[currentCardIndex];
+            const q = questionsDB[qIndex];
+
+            document.getElementById("cardCategory").innerText = "Kategorie: " + q.cat;
+            document.getElementById("cardCounter").innerText = `Karte ${currentCardIndex + 1} von ${questionsDB.length}`;
+            document.getElementById("remainingCount").innerText = questionsDB.length - (currentCardIndex + 1);
+            document.getElementById("taskPrompt").innerHTML = q.prompt;
+            document.getElementById("helpVocabText").innerText = q.help;
+            document.getElementById("solutionText").innerHTML = `<b>Richtige Antwort:</b> ${q.options[q.correct]}`;
+            document.getElementById("translationText").innerHTML = `<b>Übersetzung:</b> ${q.trans}`;
+            
+            // Hide solution box & reset eye icon
+            document.getElementById("solutionBox").classList.remove("active");
+            document.getElementById("eyeIcon").className = "fa-solid fa-eye";
+            document.getElementById("scoreDisplay").innerText = "";
+
+            // Render options randomly shuffled on the card
+            let optionIndices = [0, 1, 2];
+            // Simple random option order
+            optionIndices.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById("optionsGrid");
+            grid.innerHTML = "";
+
+            optionIndices.forEach((origIdx) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = q.options[origIdx];
+                btn.onclick = () => checkAnswer(origIdx, q.correct, btn);
+                grid.appendChild(btn);
+            });
+
+            resetTimer();
+        }
+
+        function checkAnswer(selected, correct, btnElement) {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+            clearInterval(timer);
+
+            const buttons = document.querySelectorAll(".option-btn");
+            buttons.forEach(b => b.disabled = true);
+
+            if (selected === correct) {
+                btnElement.classList.add("correct");
+                score++;
+                document.getElementById("scoreDisplay").innerText = "Richtig! +1 Punkt";
+            } else {
+                btnElement.classList.add("wrong");
+                document.getElementById("scoreDisplay").innerText = "Leider falsch!";
+                // Highlight correct one
+                buttons.forEach(b => {
+                    if (b.innerText === questionsDB[shuffledIndices[currentCardIndex]].options[correct]) {
+                        b.classList.add("correct");
+                    }
+                });
+            }
+
+            // Auto show solution
+            document.getElementById("solutionBox").classList.add("active");
+            document.getElementById("eyeIcon").className = "fa-solid fa-eye-slash";
+        }
+
+        function toggleSolution() {
+            const box = document.getElementById("solutionBox");
+            const icon = document.getElementById("eyeIcon");
+            box.classList.toggle("active");
+            if (box.classList.contains("active")) {
+                icon.className = "fa-solid fa-eye-slash";
+            } else {
+                icon.className = "fa-solid fa-eye";
+            }
+        }
+
+        function drawNextCard() {
+            currentCardIndex++;
+            loadCard();
+        }
+
+        // Timer Logic
+        function startTimer() {
+            clearInterval(timer);
+            const durationSelect = document.getElementById("timerDuration");
+            timeLeft = parseInt(durationSelect.value);
+            document.getElementById("timeLeft").innerText = timeLeft;
+
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timeLeft").innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (!answeredCurrent) {
+                        answeredCurrent = true;
+                        document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+                        document.getElementById("scoreDisplay").innerText = "Zeit abgelaufen!";
+                        document.getElementById("solutionBox").classList.add("active");
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            startTimer();
+        }
+
+        document.getElementById("timerDuration").addEventListener("change", startTimer);
+
+        // Text-to-Speech Funktion (Audio vorlesen)
+        function playAudio() {
+            const q = questionsDB[shuffledIndices[currentCardIndex]];
+            // Replace underline with correct answer for fluent listening
+            let fullSentence = q.prompt.replace("_______", q.options[q.correct]);
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(fullSentence);
+                utterance.lang = 'de-DE';
+                utterance.rate = 0.9; // Slightly slower for language learners
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Dein Browser unterstützt keine Sprachausgabe.");
+            }
+        }
+
+        // Initialize App on load
+        window.onload = () => {
+            initDeck();
+        };
+    </script>
+</body>
+</html>
